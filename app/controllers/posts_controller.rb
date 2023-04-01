@@ -11,7 +11,12 @@ class PostsController < ApplicationController
 
   # GET /posts/1
   def show
-    render json: @post
+    post = Post.find_by(id: params[:id])
+    if post
+      render json: post, status: :ok
+    else
+      render json: {error: "Post not found"}, status:404
+    end
   end
 
   # POST /posts
