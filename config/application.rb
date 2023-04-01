@@ -13,6 +13,9 @@ require "action_controller/railtie"
 require "action_view/railtie"
 # require "action_cable/engine"
 require "rails/test_unit/railtie"
+require "active_storage/engine"
+require 'active_storage/attached'
+
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -34,6 +37,7 @@ module Mysmiles
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
+    config.active_storage.service = :local
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
     config.action_dispatch.cookies_same_site_protection = :strict

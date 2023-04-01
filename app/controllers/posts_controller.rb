@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   # before_action :set_post, only: %i[ show update destroy ]
-  skip_before_action :authorize, only:[:index,:destroy,:create]
+  skip_before_action :authorize, only:[:index,:destroy,:create,:update]
 
   # GET /posts
   def index
@@ -25,18 +25,44 @@ class PostsController < ApplicationController
     end
   end
 
+  # def create
+  #   @post = Post.new(post_params)
+  #   images = params[:images]
+  #   images.each do |image|
+  #     @post.images.attach(io: image, filename: image.original_filename)
+  #   end
+  #   if @post.save
+  #     render json: @post, status: :created
+  #   else
+  #     render json: @post.errors, status: :unprocessable_entity
+  #   end
+  # end
+
   # PATCH/PUT /posts/1
   def update
-    if @post.update(post_params)
-      render json: @post
+    post = Post.find(params[:id])
+    if post.update(post_params)
+      render json: post
     else
-      render json: @post.errors, status: :unprocessable_entity
+      render json: { error: "Failed to update post" }, status: :unprocessable_entity
     end
   end
+  
 
   # DELETE /posts/1
   def destroy
-    @post.destroy
+    post = Post.find_by(id: params[:id])
+    if post
+      post.destroy
+      head :no_content
+    else
+      render json: {error: "Failed to delete"}, status: :not_found
+    end
+  end
+
+  def latest
+    @post = Post.last
+    render json: PostSerializer.new(@post).serializable_hash[:data][:attributes]
   end
 
   private
